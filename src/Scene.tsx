@@ -11,9 +11,6 @@ import {
   useFaceInfo,
 } from "@vincentt-xr/sdk/tracking";
 
-import holderSrc from "../Speed Grab Assets/Holder.png";
-import stickSrc from "../Speed Grab Assets/Stick.png";
-import handSrc from "../Speed Grab Assets/Hand.png";
 import { useGestureHold } from "./gesture";
 
 const CANVAS = { width: 720, height: 1280 };
@@ -229,7 +226,7 @@ export const Scene = ({
             <Fragment key={stick.id}>
               <ScreenImage
                 name={`stick-${stick.id + 1}`}
-                src={stickSrc}
+                src="/images/Stick.png"
                 coordinateSpace="canvas"
                 canvasSize={CANVAS}
                 position={[x + missShake, y]}
@@ -295,7 +292,7 @@ export const Scene = ({
 
         <ScreenImage
           name="holder"
-          src={holderSrc}
+          src="/images/Holder.png"
           coordinateSpace="canvas"
           canvasSize={CANVAS}
           position={[0, 560 + Math.sin(elapsed * 1.8) * 5]}
@@ -306,7 +303,7 @@ export const Scene = ({
 
         <ScreenImage
           name="hand"
-          src={handSrc}
+          src="/images/Hand.png"
           coordinateSpace="canvas"
           canvasSize={CANVAS}
           position={[handX, HAND_Y + Math.sin(elapsed * 5) * 4]}
