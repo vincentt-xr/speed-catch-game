@@ -32,6 +32,7 @@ type EditorSceneStore = RenderGroupSceneObjectStore & {
 type HudSceneEditorProps = {
   loadingComponent: React.ReactNode;
   errorComponent: React.ReactNode;
+  canvasProps?: React.ComponentProps<typeof XRScene>["canvasProps"];
   mediaSourceBinder: React.ReactNode;
   gameScene: React.ReactNode;
   timeText: string;
@@ -135,6 +136,7 @@ const createInitialScene = (): EditorSceneStore => {
 export const HudSceneEditor = ({
   loadingComponent,
   errorComponent,
+  canvasProps,
   mediaSourceBinder,
   gameScene,
   timeText,
@@ -193,6 +195,7 @@ export const HudSceneEditor = ({
         errorComponent={errorComponent}
         loadingTransitionDuration={1000}
         style={{ width: "100%", height: "100%" }}
+        canvasProps={canvasProps}
       >
         {mediaSourceBinder}
         <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={45} />
