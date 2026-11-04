@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { flushSync } from "react-dom";
-import { XRProvider, XRMediaSource } from "@vincentt-xr/sdk";
+import { XRProvider, XRScene, XRMediaSource } from "@vincentt-xr/sdk";
 import {
   useXRContext,
   useXRError,
@@ -16,9 +16,10 @@ import {
 } from "@vincentt-xr/sdk/low-level";
 import { mountViewerBeacon, reportSession } from "@vincentt-xr/analytics";
 import { openConsoleChannel } from "@vincentt-xr/harness";
+import { PerspectiveCamera } from "@react-three/drei";
 
-import { Scene } from "./Scene";
 import { HudSceneEditor } from "./HudSceneEditor";
+import { PreviewAnchors } from "./PreviewAnchors";
 import { FrameContainer } from "./FrameContainer";
 import { CaptureControls } from "./CaptureControls";
 import {
@@ -271,10 +272,6 @@ export const Shell = () => {
   // delicate path. The cost is that release JUMPS to where the world now is
   // rather than resuming from the frozen instant.
   const [paused, setPaused] = useState(false);
-  const [hudTexts, setHudTexts] = useState({
-    timeText: "Time : 0 sec",
-    caughtText: "Caught : 0 / 8",
-  });
 
   const applySource = useCallback(
     (next: MediaPreset) => {
@@ -385,21 +382,24 @@ export const Shell = () => {
 
   return (
     <FrameContainer>
-      <HudSceneEditor
+      <XRScene
         loadingComponent={<Loading shouldFadeOut={ready} />}
         errorComponent={<CameraError />}
-        // `canvasProps`, NOT a bare `frameloop`: HudSceneEditor hands it to the
-        // SDK's `<XRScene>`, which owns the `<Canvas>`; r3f's prop does not exist
-        // there. The SDK spreads this AFTER its own gl defaults, so this value wins.
+        loadingTransitionDuration={1000}
+        style={{ width: "100%", height: "100%" }}
+        // `canvasProps`, NOT a bare `frameloop` — this is `<XRScene>`, the SDK's
+        // component, which owns the `<Canvas>`; r3f's prop does not exist here.
+        // The SDK spreads this AFTER its own gl defaults, so this value wins.
         // A later path needing `preserveDrawingBuffer` (a screenshot, an
         // annotation capture) merges into `canvasProps.gl` rather than replacing
         // `canvasProps`, which would drop the freeze.
         canvasProps={{ frameloop: paused ? "never" : "always", ...RECORD_CANVAS }}
-        mediaSourceBinder={<MediaSourceBinder onSourceSelected={setSelected} />}
-        gameScene={<Scene onHudTextChange={setHudTexts} />}
-        timeText={hudTexts.timeText}
-        caughtText={hudTexts.caughtText}
-      />
+      >
+        <MediaSourceBinder onSourceSelected={setSelected} />
+        <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={45} />
+        <HudSceneEditor />
+        <PreviewAnchors />
+      </XRScene>
       <MediaSourceControl value={selected} onChange={applySource} />
       {RECORD.enabled ? <CaptureControls audio={RECORD.audio} /> : null}
       {MobileXRAcceptanceHarness ? (

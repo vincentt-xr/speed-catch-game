@@ -1,6 +1,4 @@
-/* eslint-disable react/no-unknown-property */
 import { useEffect, useMemo, useState } from "react";
-import { PerspectiveCamera } from "@react-three/drei";
 import {
   createDefaultComponent,
   createOrderedComponentsSelector,
@@ -19,24 +17,13 @@ import {
   RenderGroupLayer,
   SceneObjectRenderer,
   SequentialRenderPasses,
-  XRScene,
   VideoBackground,
 } from "@vincentt-xr/sdk";
 
-import { PreviewAnchors } from "./PreviewAnchors";
+import { Scene } from "./Scene";
 
 type EditorSceneStore = RenderGroupSceneObjectStore & {
   selectedObjectId: SceneObjectId;
-};
-
-type HudSceneEditorProps = {
-  loadingComponent: React.ReactNode;
-  errorComponent: React.ReactNode;
-  canvasProps?: React.ComponentProps<typeof XRScene>["canvasProps"];
-  mediaSourceBinder: React.ReactNode;
-  gameScene: React.ReactNode;
-  timeText: string;
-  caughtText: string;
 };
 
 const selectOrderedComponents = createOrderedComponentsSelector();
@@ -133,16 +120,12 @@ const createInitialScene = (): EditorSceneStore => {
   );
 };
 
-export const HudSceneEditor = ({
-  loadingComponent,
-  errorComponent,
-  canvasProps,
-  mediaSourceBinder,
-  gameScene,
-  timeText,
-  caughtText,
-}: HudSceneEditorProps) => {
+export const HudSceneEditor = () => {
   const [scene, setScene] = useState<EditorSceneStore>(createInitialScene);
+  const [{ timeText, caughtText }, setHudTexts] = useState({
+    timeText: "Time : 0 sec",
+    caughtText: "Caught : 0 / 8",
+  });
 
   useEffect(() => {
     setScene((current: EditorSceneStore) => {
@@ -190,34 +173,25 @@ export const HudSceneEditor = ({
   };
 
   return (
-      <XRScene
-        loadingComponent={loadingComponent}
-        errorComponent={errorComponent}
-        loadingTransitionDuration={1000}
-        style={{ width: "100%", height: "100%" }}
-        canvasProps={canvasProps}
-      >
-        {mediaSourceBinder}
-        <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={45} />
-        <SequentialRenderPasses layers={renderPassLayers} />
-        <RenderGroupLayer layer={EXTERNAL_BACKGROUND_RENDER_LAYER}>
-          <VideoBackground customBackground="#6366f1" renderOrder={-999} />
-        </RenderGroupLayer>
-        <ambientLight intensity={0.7} />
-        <directionalLight position={[3, 4, 5]} intensity={1.3} />
-        {gameScene}
-        {renderPlan.map((entry) => (
-          <SceneObjectRenderer
-            key={entry.objectId}
-            objectId={entry.objectId}
-            store={scene}
-            renderOrder={entry.renderOrder}
-            renderLayer={entry.renderLayer}
-            editorMode={false}
-            onComponentChange={replaceComponent}
-          />
-        ))}
-        <PreviewAnchors />
-      </XRScene>
+    <>
+      <SequentialRenderPasses layers={renderPassLayers} />
+      <RenderGroupLayer layer={EXTERNAL_BACKGROUND_RENDER_LAYER}>
+        <VideoBackground customBackground="#6366f1" renderOrder={-999} />
+      </RenderGroupLayer>
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[3, 4, 5]} intensity={1.3} />
+      <Scene onHudTextChange={setHudTexts} />
+      {renderPlan.map((entry) => (
+        <SceneObjectRenderer
+          key={entry.objectId}
+          objectId={entry.objectId}
+          store={scene}
+          renderOrder={entry.renderOrder}
+          renderLayer={entry.renderLayer}
+          editorMode={false}
+          onComponentChange={replaceComponent}
+        />
+      ))}
+    </>
   );
 };
