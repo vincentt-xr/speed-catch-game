@@ -3,8 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import {
   ScreenImage,
   ScreenSpaceUI,
-  ScreenTransform,
-  TextLabel,
+  ScreenText,
 } from "@vincentt-xr/sdk";
 import {
   GestureTracker,
@@ -105,6 +104,9 @@ export const Scene = ({
   const pregame = elapsed < COUNTDOWN_SECONDS;
   const readyForDrop =
     active && sticks.every((stick) => stick.status !== "falling");
+  // A hidden ScreenText still rebuilds its texture when a prop changes, so animate only while shown.
+  const wobble = (on: boolean, base: number, amp: number, speed: number) =>
+    on ? base + Math.sin(elapsed * speed) * amp : base;
 
   const startGame = () => {
     // Capture the current face center as the baseline for head movement.
@@ -237,50 +239,44 @@ export const Scene = ({
                 renderOrder={20}
               />
               {catchPulse > 0 && (
-                <ScreenTransform
-                  anchors={{
-                    left: (x - 70 * (1 + catchPulse)) / 360,
-                    right: (x + 70 * (1 + catchPulse)) / 360,
-                    top: (y + catchRise + 70 * (1 + catchPulse)) / 640,
-                    bottom: (y + catchRise - 70 * (1 + catchPulse)) / 640,
+                <ScreenText
+                  name="Catch +1"
+                  text="+1"
+                  screenTransform={{
+                    position: { x, y: y + catchRise },
+                    size: { width: 280, height: 280 },
+                    renderOrder: 0,
                   }}
-                >
-                  <TextLabel
-                    text="+1"
-                    fontSize={170}
-                    color="#ffffff"
-                    bgColor="transparent"
-                    strokeColor="#1f7a37"
-                    strokeWidth={10}
-                    shadowColor="#ffca3a"
-                    shadowBlur={18}
-                    shadowOpacity={catchPulse}
-                    aspect={2}
-                  />
-                </ScreenTransform>
+                  fontSize={46 * (1 + catchPulse)}
+                  color="#ffffff"
+                  bgColor="transparent"
+                  padding={0}
+                  strokeColor="#1f7a37"
+                  strokeWidth={2.7 * (1 + catchPulse)}
+                  shadowColor="#ffca3a"
+                  shadowBlur={4.9 * (1 + catchPulse)}
+                  shadowOpacity={catchPulse}
+                />
               )}
               {missPulse > 0 && (
-                <ScreenTransform
-                  anchors={{
-                    left: (x - 90) / 360,
-                    right: (x + 90) / 360,
-                    top: (y + 40) / 640,
-                    bottom: (y - 40) / 640,
+                <ScreenText
+                  name="Miss"
+                  text="MISS"
+                  screenTransform={{
+                    position: { x: x + missShake, y },
+                    size: { width: 180, height: 80 },
+                    renderOrder: 0,
                   }}
-                >
-                  <TextLabel
-                    text="MISS"
-                    fontSize={110}
-                    color="#ffffff"
-                    bgColor="transparent"
-                    strokeColor="#9f1239"
-                    strokeWidth={8}
-                    shadowColor="#fb7185"
-                    shadowBlur={14}
-                    shadowOpacity={missPulse}
-                    aspect={2.8}
-                  />
-                </ScreenTransform>
+                  fontSize={17}
+                  color="#ffffff"
+                  bgColor="transparent"
+                  padding={0}
+                  strokeColor="#9f1239"
+                  strokeWidth={1.25}
+                  shadowColor="#fb7185"
+                  shadowBlur={2.2}
+                  shadowOpacity={missPulse}
+                />
               )}
             </Fragment>
           );
@@ -308,229 +304,172 @@ export const Scene = ({
           renderOrder={30}
         />
 
-        <ScreenTransform
-          anchors={{
-            left: (handX + 8) / 360,
-            right: (handX + 84) / 360,
-            top: (HAND_Y + 92) / 640,
-            bottom: (HAND_Y + 16) / 640,
+        <ScreenText
+          name="Hand marker"
+          text="○"
+          screenTransform={{
+            position: { x: handX + 46, y: HAND_Y + 54 },
+            size: { width: 76, height: 76 },
+            renderOrder: 0,
           }}
-        >
-          <TextLabel
-            text="○"
-            fontSize={205}
-            color="#ffffff"
-            bgColor="transparent"
-            strokeColor="#38bdf8"
-            strokeWidth={5}
-            shadowColor="#38bdf8"
-            shadowBlur={14 + Math.sin(elapsed * 7) * 5}
-            shadowOpacity={0.8}
-            aspect={1}
-          />
-        </ScreenTransform>
+          fontSize={30}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#38bdf8"
+          strokeWidth={0.75}
+          shadowColor="#38bdf8"
+          shadowBlur={2.1 + Math.sin(elapsed * 7) * 0.75}
+          shadowOpacity={0.8}
+        />
 
-        {!started && (
-          <ScreenTransform
-            anchors={{
-              left: -0.82,
-              right: 0.82,
-              top: -0.04 + Math.sin(elapsed * 6) * 0.012,
-              bottom: -0.22 + Math.sin(elapsed * 6) * 0.012,
-            }}
-          >
-            <TextLabel
-              name="startPrompt"
-              text="Show Peace Sign to Start Game"
-              fontSize={120}
-              color="#ffffff"
-              bgColor="transparent"
-              strokeColor="#2f1b0c"
-              strokeWidth={10}
-              shadowColor="#ffca3a"
-              shadowBlur={18 + Math.sin(elapsed * 6) * 8}
-              shadowOpacity={0.85}
-              shadowOffsetY={4}
-              glow={{
-                color: "#ffca3a",
-                style: "outward",
-                intensity: 0.65,
-                range: 18,
-              }}
-              aspect={6.8}
-            />
-          </ScreenTransform>
-        )}
-
-        {started && pregame && (
-          <ScreenTransform
-            anchors={{ left: -0.76, right: 0.76, top: -0.08, bottom: -0.25 }}
-          >
-            <TextLabel
-              text="Move your head left and right"
-              fontSize={110}
-              color="#ffffff"
-              bgColor="transparent"
-              strokeColor="#2f1b0c"
-              strokeWidth={9}
-              shadowColor="#38bdf8"
-              shadowBlur={16}
-              aspect={6}
-            />
-          </ScreenTransform>
-        )}
-
-        {/* One literal TextLabel per step, so the console's visual editor can retype each. */}
-        {countdownText === "3" && (
-          <ScreenTransform
-            anchors={{ left: -0.36, right: 0.36, top: 0.22, bottom: -0.18 }}
-          >
-            <TextLabel
-              text="3"
-              fontSize={300}
-              color="#ffffff"
-              bgColor="transparent"
-              strokeColor="#2f1b0c"
-              strokeWidth={16}
-              shadowColor="#ffca3a"
-              shadowBlur={24 + Math.sin(elapsed * 12) * 8}
-              aspect={1.4}
-            />
-          </ScreenTransform>
-        )}
-        {countdownText === "2" && (
-          <ScreenTransform
-            anchors={{ left: -0.36, right: 0.36, top: 0.22, bottom: -0.18 }}
-          >
-            <TextLabel
-              text="2"
-              fontSize={300}
-              color="#ffffff"
-              bgColor="transparent"
-              strokeColor="#2f1b0c"
-              strokeWidth={16}
-              shadowColor="#ffca3a"
-              shadowBlur={24 + Math.sin(elapsed * 12) * 8}
-              aspect={1.4}
-            />
-          </ScreenTransform>
-        )}
-        {countdownText === "1" && (
-          <ScreenTransform
-            anchors={{ left: -0.36, right: 0.36, top: 0.22, bottom: -0.18 }}
-          >
-            <TextLabel
-              text="1"
-              fontSize={300}
-              color="#ffffff"
-              bgColor="transparent"
-              strokeColor="#2f1b0c"
-              strokeWidth={16}
-              shadowColor="#ffca3a"
-              shadowBlur={24 + Math.sin(elapsed * 12) * 8}
-              aspect={1.4}
-            />
-          </ScreenTransform>
-        )}
-        {countdownText === "GO!" && (
-          <ScreenTransform
-            anchors={{ left: -0.36, right: 0.36, top: 0.22, bottom: -0.18 }}
-          >
-            <TextLabel
-              text="GO!"
-              fontSize={230}
-              color="#ffffff"
-              bgColor="transparent"
-              strokeColor="#2f1b0c"
-              strokeWidth={16}
-              shadowColor="#ffca3a"
-              shadowBlur={24 + Math.sin(elapsed * 12) * 8}
-              aspect={1.4}
-            />
-          </ScreenTransform>
-        )}
-
-        {readyForDrop && (
-          <ScreenTransform
-            anchors={{ left: -0.32, right: 0.32, top: 0.08, bottom: -0.06 }}
-          >
-            <TextLabel
-              text="READY"
-              fontSize={135}
-              color="#ffffff"
-              bgColor="transparent"
-              strokeColor="#2f1b0c"
-              strokeWidth={9}
-              shadowColor="#ffca3a"
-              shadowBlur={16 + Math.sin(elapsed * 8) * 5}
-              aspect={3}
-            />
-          </ScreenTransform>
-        )}
-
-        {won && (
-          <ScreenTransform
-            anchors={{ left: -0.62, right: 0.62, top: 0.17, bottom: -0.03 }}
-          >
-            <TextLabel
-              name="result"
-              text="YOU WIN"
-              fontSize={210}
-              color="#ffffff"
-              bgColor="rgba(31, 122, 55, 0.9)"
-              borderRadius={26}
-              aspect={4.4}
-            />
-          </ScreenTransform>
-        )}
-
-        {failed && (
-          <ScreenTransform
-            anchors={{ left: -0.62, right: 0.62, top: 0.17, bottom: -0.03 }}
-          >
-            <TextLabel
-              name="result"
-              text={`MISSED ${finalMissed}`}
-              fontSize={210}
-              color="#ffffff"
-              bgColor="rgba(170, 45, 35, 0.9)"
-              borderRadius={26}
-              aspect={4.4}
-            />
-          </ScreenTransform>
-        )}
-
-        {(won || failed) && (
-          <ScreenTransform
-            anchors={{
-              left: -0.82,
-              right: 0.82,
-              top: -0.12 + Math.sin(elapsed * 6) * 0.012,
-              bottom: -0.3 + Math.sin(elapsed * 6) * 0.012,
-            }}
-          >
-            <TextLabel
-              name="resetPrompt"
-              text="Show Peace Sign to Reset Game"
-              fontSize={120}
-              color="#ffffff"
-              bgColor="transparent"
-              strokeColor="#2f1b0c"
-              strokeWidth={10}
-              shadowColor="#ffca3a"
-              shadowBlur={18 + Math.sin(elapsed * 6) * 8}
-              shadowOpacity={0.85}
-              shadowOffsetY={4}
-              glow={{
-                color: "#ffca3a",
-                style: "outward",
-                intensity: 0.65 + Math.sin(elapsed * 6) * 0.2,
-                range: 18,
-              }}
-              aspect={6.8}
-            />
-          </ScreenTransform>
-        )}
+        {/* One literal ScreenText per message, so the console's visual editor can retype and
+            move each; game state only toggles `visible`. */}
+        <ScreenText
+          name="Start prompt"
+          text="Show Peace Sign to Start Game"
+          screenTransform={{ position: { x: 0, y: -83 }, size: { width: 590, height: 115 }, rotation: 0, renderOrder: 0 }}
+          fontSize={27}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#2f1b0c"
+          strokeWidth={2.25}
+          shadowColor="#ffca3a"
+          shadowBlur={wobble(!started, 4, 1.8, 6)}
+          shadowOpacity={0.85}
+          shadowOffsetY={0.9}
+          glow={{ color: "#ffca3a", style: "outward", intensity: 0.65, range: 0.225 }}
+          visible={!started}
+        />
+        <ScreenText
+          name="Move head prompt"
+          text="Move your head left and right"
+          screenTransform={{ position: { x: 0, y: -106 }, size: { width: 547, height: 109 }, rotation: 0, renderOrder: 0 }}
+          fontSize={23}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#2f1b0c"
+          strokeWidth={1.9}
+          shadowColor="#38bdf8"
+          shadowBlur={3.4}
+          visible={started && pregame}
+        />
+        <ScreenText
+          name="Countdown 3"
+          text="3"
+          screenTransform={{ position: { x: 0, y: 13 }, size: { width: 259, height: 256 }, rotation: 0, renderOrder: 0 }}
+          fontSize={150}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#2f1b0c"
+          strokeWidth={8}
+          shadowColor="#ffca3a"
+          shadowBlur={wobble(countdownText === "3", 12, 4, 12)}
+          visible={countdownText === "3"}
+        />
+        <ScreenText
+          name="Countdown 2"
+          text="2"
+          screenTransform={{ position: { x: 0, y: 13 }, size: { width: 259, height: 256 }, rotation: 0, renderOrder: 0 }}
+          fontSize={150}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#2f1b0c"
+          strokeWidth={8}
+          shadowColor="#ffca3a"
+          shadowBlur={wobble(countdownText === "2", 12, 4, 12)}
+          visible={countdownText === "2"}
+        />
+        <ScreenText
+          name="Countdown 1"
+          text="1"
+          screenTransform={{ position: { x: 0, y: 13 }, size: { width: 259, height: 256 }, rotation: 0, renderOrder: 0 }}
+          fontSize={150}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#2f1b0c"
+          strokeWidth={8}
+          shadowColor="#ffca3a"
+          shadowBlur={wobble(countdownText === "1", 12, 4, 12)}
+          visible={countdownText === "1"}
+        />
+        <ScreenText
+          name="Countdown GO"
+          text="GO!"
+          screenTransform={{ position: { x: 0, y: 13 }, size: { width: 259, height: 256 }, rotation: 0, renderOrder: 0 }}
+          fontSize={115}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#2f1b0c"
+          strokeWidth={8}
+          shadowColor="#ffca3a"
+          shadowBlur={wobble(countdownText === "GO!", 12, 4, 12)}
+          visible={countdownText === "GO!"}
+        />
+        <ScreenText
+          name="Ready"
+          text="READY"
+          screenTransform={{ position: { x: 0, y: 6 }, size: { width: 230, height: 90 }, rotation: 0, renderOrder: 0 }}
+          fontSize={24}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#2f1b0c"
+          strokeWidth={1.6}
+          shadowColor="#ffca3a"
+          shadowBlur={wobble(readyForDrop, 2.8, 0.9, 8)}
+          visible={readyForDrop}
+        />
+        <ScreenText
+          name="You win"
+          text="YOU WIN"
+          screenTransform={{ position: { x: 0, y: 45 }, size: { width: 446, height: 128 }, rotation: 0, renderOrder: 0 }}
+          fontSize={52}
+          color="#ffffff"
+          bgColor="rgba(31, 122, 55, 0.9)"
+          borderRadius={6.5}
+          padding={8}
+          visible={won}
+        />
+        <ScreenText
+          name="Missed count"
+          text={`MISSED ${finalMissed}`}
+          screenTransform={{ position: { x: 0, y: 45 }, size: { width: 446, height: 128 }, rotation: 0, renderOrder: 0 }}
+          fontSize={52}
+          color="#ffffff"
+          bgColor="rgba(170, 45, 35, 0.9)"
+          borderRadius={6.5}
+          padding={8}
+          visible={failed}
+        />
+        <ScreenText
+          name="Reset prompt"
+          text="Show Peace Sign to Reset Game"
+          screenTransform={{ position: { x: 0, y: -134 }, size: { width: 590, height: 115 }, rotation: 0, renderOrder: 0 }}
+          fontSize={27}
+          color="#ffffff"
+          bgColor="transparent"
+          padding={0}
+          strokeColor="#2f1b0c"
+          strokeWidth={2.25}
+          shadowColor="#ffca3a"
+          shadowBlur={wobble(won || failed, 4, 1.8, 6)}
+          shadowOpacity={0.85}
+          shadowOffsetY={0.9}
+          glow={{
+            color: "#ffca3a",
+            style: "outward",
+            intensity: wobble(won || failed, 0.65, 0.2, 6),
+            range: 0.225,
+          }}
+          visible={won || failed}
+        />
       </ScreenSpaceUI>
     </>
   );
