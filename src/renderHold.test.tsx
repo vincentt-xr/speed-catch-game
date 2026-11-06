@@ -131,7 +131,11 @@ async function deliver(data: unknown, origin: string = CONSOLE_ORIGIN) {
         source: window.parent as Window,
       }),
     );
-    await Promise.resolve();
+    // The harness copies the picture in the next frame and only then calls the
+    // app's hold handler, so a hold lands one frame after the command.
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => setTimeout(resolve, 0));
+    });
   });
 }
 
@@ -262,10 +266,10 @@ describe("QA-F13-G45 · a media command releases the hold, BEFORE applying", () 
 });
 
 describe("QA-F13-G45 · the announce declares the capability, and the app says nothing else", () => {
-  it("carries `capabilities: ['render-hold']` because the handler is wired", async () => {
+  it("carries `render-hold` because the handler is wired", async () => {
     await mountFramed();
 
-    expect(announce()?.capabilities).toEqual(["render-hold"]);
+    expect(announce()?.capabilities).toEqual(["render-hold", "frame-still"]);
   });
 
   it("the app sends NOTHING back on any path — announce excepted, once", async () => {

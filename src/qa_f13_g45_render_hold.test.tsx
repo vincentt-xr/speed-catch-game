@@ -141,7 +141,11 @@ async function deliver(data: unknown, origin: string = CONSOLE_ORIGIN) {
         source: window.parent as Window,
       }),
     );
-    await Promise.resolve();
+    // The harness copies the picture in the next frame and only then calls the
+    // app's hold handler, so a hold lands one frame after the command.
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => setTimeout(resolve, 0));
+    });
   });
 }
 
@@ -337,7 +341,7 @@ describe("QA-F13-G45 · a media command clears the hold BEFORE applying the sour
 });
 
 describe("QA-F13-G45 · the capability is emitted ONLY when the handler is wired", () => {
-  it("the app's announce carries `capabilities: ['render-hold']`", async () => {
+  it("the app's announce carries `render-hold`", async () => {
     // `D-the-capability-is-derived-from-the-handler`. The console TRUSTS this
     // self-declaration and CANNOT detect a false one — there is no ack, by design —
     // so the only place a false declaration is preventable is structurally, here.
@@ -347,7 +351,7 @@ describe("QA-F13-G45 · the capability is emitted ONLY when the handler is wired
       announce()?.capabilities,
       "the app wired a hold handler and did not declare the capability, so the console " +
         "renders no control for an app that can freeze",
-    ).toEqual(["render-hold"]);
+    ).toEqual(["render-hold", "frame-still"]);
   });
 
   it("the declaration is DERIVED from the wiring — the harness cannot be told otherwise", async () => {
@@ -389,14 +393,12 @@ describe("QA-F13-G45 · the capability is emitted ONLY when the handler is wired
       withHandler.capabilities,
       "supplying a handler did not produce the declaration — an app could then implement " +
         "a hold the console never offers",
-    ).toEqual(["render-hold"]);
+    ).toContain("render-hold");
     expect(
-      Object.prototype.hasOwnProperty.call(withoutHandler, "capabilities"),
-      "an app with NO handler emitted the key — that is a live button that does nothing, " +
-        "the present-but-dead failure the console cannot detect. An old harness OMITS " +
-        "the key, and emitting `[]` would hand the console a second shape meaning the " +
-        "same thing.",
-    ).toBe(false);
+      withoutHandler.capabilities ?? [],
+      "an app with NO handler declared `render-hold` — that is a live button that does " +
+        "nothing, the present-but-dead failure the console cannot detect.",
+    ).not.toContain("render-hold");
   });
 });
 

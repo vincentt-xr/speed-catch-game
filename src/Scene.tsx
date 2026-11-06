@@ -188,10 +188,6 @@ export const Scene = ({
     });
   });
 
-  let resultText = "";
-  if (won) resultText = "YOU WIN";
-  else if (failed) resultText = `MISSED ${finalMissed}`;
-
   return (
     <>
       <GestureTracker active={!started || won || failed} />
@@ -384,13 +380,65 @@ export const Scene = ({
           </ScreenTransform>
         )}
 
-        {countdownText && (
+        {/* One literal TextLabel per step, so the console's visual editor can retype each. */}
+        {countdownText === "3" && (
           <ScreenTransform
             anchors={{ left: -0.36, right: 0.36, top: 0.22, bottom: -0.18 }}
           >
             <TextLabel
-              text={countdownText}
-              fontSize={countdownText === "GO!" ? 230 : 300}
+              text="3"
+              fontSize={300}
+              color="#ffffff"
+              bgColor="transparent"
+              strokeColor="#2f1b0c"
+              strokeWidth={16}
+              shadowColor="#ffca3a"
+              shadowBlur={24 + Math.sin(elapsed * 12) * 8}
+              aspect={1.4}
+            />
+          </ScreenTransform>
+        )}
+        {countdownText === "2" && (
+          <ScreenTransform
+            anchors={{ left: -0.36, right: 0.36, top: 0.22, bottom: -0.18 }}
+          >
+            <TextLabel
+              text="2"
+              fontSize={300}
+              color="#ffffff"
+              bgColor="transparent"
+              strokeColor="#2f1b0c"
+              strokeWidth={16}
+              shadowColor="#ffca3a"
+              shadowBlur={24 + Math.sin(elapsed * 12) * 8}
+              aspect={1.4}
+            />
+          </ScreenTransform>
+        )}
+        {countdownText === "1" && (
+          <ScreenTransform
+            anchors={{ left: -0.36, right: 0.36, top: 0.22, bottom: -0.18 }}
+          >
+            <TextLabel
+              text="1"
+              fontSize={300}
+              color="#ffffff"
+              bgColor="transparent"
+              strokeColor="#2f1b0c"
+              strokeWidth={16}
+              shadowColor="#ffca3a"
+              shadowBlur={24 + Math.sin(elapsed * 12) * 8}
+              aspect={1.4}
+            />
+          </ScreenTransform>
+        )}
+        {countdownText === "GO!" && (
+          <ScreenTransform
+            anchors={{ left: -0.36, right: 0.36, top: 0.22, bottom: -0.18 }}
+          >
+            <TextLabel
+              text="GO!"
+              fontSize={230}
               color="#ffffff"
               bgColor="transparent"
               strokeColor="#2f1b0c"
@@ -420,53 +468,68 @@ export const Scene = ({
           </ScreenTransform>
         )}
 
-        {resultText && (
-          <>
-            <ScreenTransform
-              anchors={{ left: -0.62, right: 0.62, top: 0.17, bottom: -0.03 }}
-            >
-              <TextLabel
-                name="result"
-                text={resultText}
-                fontSize={210}
-                color="#ffffff"
-                bgColor={
-                  won ? "rgba(31, 122, 55, 0.9)" : "rgba(170, 45, 35, 0.9)"
-                }
-                borderRadius={26}
-                aspect={4.4}
-              />
-            </ScreenTransform>
-            <ScreenTransform
-              anchors={{
-                left: -0.82,
-                right: 0.82,
-                top: -0.12 + Math.sin(elapsed * 6) * 0.012,
-                bottom: -0.3 + Math.sin(elapsed * 6) * 0.012,
+        {won && (
+          <ScreenTransform
+            anchors={{ left: -0.62, right: 0.62, top: 0.17, bottom: -0.03 }}
+          >
+            <TextLabel
+              name="result"
+              text="YOU WIN"
+              fontSize={210}
+              color="#ffffff"
+              bgColor="rgba(31, 122, 55, 0.9)"
+              borderRadius={26}
+              aspect={4.4}
+            />
+          </ScreenTransform>
+        )}
+
+        {failed && (
+          <ScreenTransform
+            anchors={{ left: -0.62, right: 0.62, top: 0.17, bottom: -0.03 }}
+          >
+            <TextLabel
+              name="result"
+              text={`MISSED ${finalMissed}`}
+              fontSize={210}
+              color="#ffffff"
+              bgColor="rgba(170, 45, 35, 0.9)"
+              borderRadius={26}
+              aspect={4.4}
+            />
+          </ScreenTransform>
+        )}
+
+        {(won || failed) && (
+          <ScreenTransform
+            anchors={{
+              left: -0.82,
+              right: 0.82,
+              top: -0.12 + Math.sin(elapsed * 6) * 0.012,
+              bottom: -0.3 + Math.sin(elapsed * 6) * 0.012,
+            }}
+          >
+            <TextLabel
+              name="resetPrompt"
+              text="Show Peace Sign to Reset Game"
+              fontSize={120}
+              color="#ffffff"
+              bgColor="transparent"
+              strokeColor="#2f1b0c"
+              strokeWidth={10}
+              shadowColor="#ffca3a"
+              shadowBlur={18 + Math.sin(elapsed * 6) * 8}
+              shadowOpacity={0.85}
+              shadowOffsetY={4}
+              glow={{
+                color: "#ffca3a",
+                style: "outward",
+                intensity: 0.65 + Math.sin(elapsed * 6) * 0.2,
+                range: 18,
               }}
-            >
-              <TextLabel
-                name="resetPrompt"
-                text="Show Peace Sign to Reset Game"
-                fontSize={120}
-                color="#ffffff"
-                bgColor="transparent"
-                strokeColor="#2f1b0c"
-                strokeWidth={10}
-                shadowColor="#ffca3a"
-                shadowBlur={18 + Math.sin(elapsed * 6) * 8}
-                shadowOpacity={0.85}
-                shadowOffsetY={4}
-                glow={{
-                  color: "#ffca3a",
-                  style: "outward",
-                  intensity: 0.65 + Math.sin(elapsed * 6) * 0.2,
-                  range: 18,
-                }}
-                aspect={6.8}
-              />
-            </ScreenTransform>
-          </>
+              aspect={6.8}
+            />
+          </ScreenTransform>
         )}
       </ScreenSpaceUI>
     </>
