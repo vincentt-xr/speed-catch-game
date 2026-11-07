@@ -37,7 +37,7 @@ jobs:
 
       # `pnpm build` is `vincentt build`, so CI installs the CLI the way a creator does.
       - name: Install the Vincentt CLI
-        run: npm install --global @vincentt-xr/cli@0.27.1
+        run: npm install --global @vincentt-xr/cli@0.28.0-next.1
 
       - name: Build
         run: pnpm build

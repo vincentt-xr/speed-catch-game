@@ -21,14 +21,14 @@ importers:
         specifier: ^0.3.2
         version: 0.3.2
       '@vincentt-xr/harness':
-        specifier: ^3.0.0
-        version: 3.0.0(react@18.3.1)
+        specifier: ^3.4.0
+        version: 3.4.0(react@18.3.1)
       '@vincentt-xr/runtime':
-        specifier: 2026.11.0
-        version: 2026.11.0
+        specifier: 2026.11.5
+        version: 2026.11.5
       '@vincentt-xr/sdk':
-        specifier: 2.0.0-alpha.10
-        version: 2.0.0-alpha.10(@mediapipe/tasks-vision@0.10.35)(@react-three/drei@9.105.6(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@types/react@18.3.5)(@types/three@0.173.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(onnxruntime-web@1.29.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0)
+        specifier: 2.0.0-alpha.14
+        version: 2.0.0-alpha.14(@mediapipe/tasks-vision@0.10.35)(@react-three/drei@9.105.6(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@types/react@18.3.5)(@types/three@0.173.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(onnxruntime-web@1.29.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0)
       onnxruntime-web:
         specifier: ^1.27.0
         version: 1.29.0
@@ -1017,19 +1017,19 @@ packages:
   '@vincentt-xr/analytics@0.3.2':
     resolution: {integrity: sha512-QdhVg0jtqieAsMRA87WMOx7dPSS98cBsolY/VT5tHCPy+cRrCDiUTvuyChNvNTh8mKjc3T1EuV++gUFrIQHFfQ==}
 
-  '@vincentt-xr/harness@3.0.0':
-    resolution: {integrity: sha512-+bRf+tRnyOvCAv+1dz9jN1Gq6PXR0EoPssQgnfaHjPvdjP3dcBQ1VQ0jCQwNQkRHt9TucvLkcSQBdNIn1fhYBg==}
+  '@vincentt-xr/harness@3.4.0':
+    resolution: {integrity: sha512-TDsAMtSz6niR1Ho52WQMSj9jPSYX9zL2YMu84BXkOY+CgDJjP5PXhCQQUjp4pwY1TQ4w4QYnEkAzO+xL9HUnnw==}
     peerDependencies:
       react: ^18.2.0
     peerDependenciesMeta:
       react:
         optional: true
 
-  '@vincentt-xr/runtime@2026.11.0':
-    resolution: {integrity: sha512-qv2HuKyUCQlrx+m58mzr4RThDKTsWHprSwxyaXgnS+y+z5Nlr/Gbws/g52RuGb0YeusJXuhdb15M8knFi3GvVw==}
+  '@vincentt-xr/runtime@2026.11.5':
+    resolution: {integrity: sha512-Xzj4QtdTPIFQKnt1U6+9PQc/e6lrfbSfCrzqTCGFnn2tDxF1X7pm0uSk38XWJrvxGmbpH8Sx3OH+0mctODVpUw==}
 
-  '@vincentt-xr/sdk@2.0.0-alpha.10':
-    resolution: {integrity: sha512-1pk/c+R18c4/XmzaFrax1WTeNUs24UyjoZyhg6D3L/lUQ+3U3CHKGdXne4uGLZVCezHHweJIUQ0RfwXMee3MqQ==}
+  '@vincentt-xr/sdk@2.0.0-alpha.14':
+    resolution: {integrity: sha512-LUt/qfMd4GsWYdHlmoORFGqlUFiBfKJOEK8zryC5qsFOJVQ7fh+XWvRlamr/vZq4EaeLoARRSMo2dM6NtPp/Bw==}
     peerDependencies:
       '@google/model-viewer': ^4.0.0
       '@mediapipe/tasks-vision': ^0.10.18
@@ -3783,15 +3783,15 @@ snapshots:
 
   '@vincentt-xr/analytics@0.3.2': {}
 
-  '@vincentt-xr/harness@3.0.0(react@18.3.1)':
+  '@vincentt-xr/harness@3.4.0(react@18.3.1)':
     dependencies:
       qrcode: 1.5.4
     optionalDependencies:
       react: 18.3.1
 
-  '@vincentt-xr/runtime@2026.11.0': {}
+  '@vincentt-xr/runtime@2026.11.5': {}
 
-  '@vincentt-xr/sdk@2.0.0-alpha.10(@mediapipe/tasks-vision@0.10.35)(@react-three/drei@9.105.6(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@types/react@18.3.5)(@types/three@0.173.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(onnxruntime-web@1.29.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0)':
+  '@vincentt-xr/sdk@2.0.0-alpha.14(@mediapipe/tasks-vision@0.10.35)(@react-three/drei@9.105.6(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@types/react@18.3.5)(@types/three@0.173.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(onnxruntime-web@1.29.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0)':
     dependencies:
       '@mediapipe/tasks-vision': 0.10.35
       '@react-three/drei': 9.105.6(@react-three/fiber@8.18.0(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@types/react@18.3.5)(@types/three@0.173.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0)
