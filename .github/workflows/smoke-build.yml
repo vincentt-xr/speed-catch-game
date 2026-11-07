@@ -22,10 +22,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # No version input: the action reads package.json's packageManager pin.
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -35,6 +34,10 @@ jobs:
 
       - name: Install (frozen lockfile)
         run: pnpm install --frozen-lockfile
+
+      # `pnpm build` is `vincentt build`, so CI installs the CLI the way a creator does.
+      - name: Install the Vincentt CLI
+        run: npm install --global @vincentt-xr/cli@0.28.0-next.1
 
       - name: Build
         run: pnpm build
